@@ -19,6 +19,7 @@ class QRCodeAdapter(private val context: Context) : RecyclerView.Adapter<QRCodeA
     private val allQRCodes = mutableSetOf<QRCode>()
     private val displayList = mutableListOf<QRCode>()
     private val prefs = context.getSharedPreferences("qr_codes", Context.MODE_PRIVATE)
+    private var onDataChangeListener: ((Int, Int) -> Unit)? = null
 
     init {
         loadQRCodes()
@@ -62,12 +63,23 @@ class QRCodeAdapter(private val context: Context) : RecyclerView.Adapter<QRCodeA
 
     override fun getItemCount() = displayList.size
 
+    fun setOnDataChangeListener(listener: (Int, Int) -> Unit) {
+        onDataChangeListener = listener
+        // 初始化时触发一次
+        notifyDataChanged()
+    }
+
+    private fun notifyDataChanged() {
+        onDataChangeListener?.invoke(displayList.size, getTodayCount())
+    }
+
     fun addQRCode(qrCode: QRCode): Boolean {
         val existingQRCode = allQRCodes.find { it.content == qrCode.content }
         return if (existingQRCode == null) {
             allQRCodes.add(qrCode)
             saveQRCodes()
             updateDisplayList()
+            notifyDataChanged()
             true
         } else {
             false
@@ -79,6 +91,7 @@ class QRCodeAdapter(private val context: Context) : RecyclerView.Adapter<QRCodeA
         allQRCodes.remove(qrCode)
         updateDisplayList()
         saveQRCodes()
+        notifyDataChanged()
     }
 
     private fun loadQRCodes() {

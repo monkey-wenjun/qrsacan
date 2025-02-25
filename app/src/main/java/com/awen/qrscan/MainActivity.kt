@@ -88,7 +88,12 @@ class MainActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.viewPager)
         dataStatsFragment = DataStatsFragment()
         qrCodeListFragment = QRCodeListFragment().apply {
-            adapter = QRCodeAdapter(this@MainActivity)
+            adapter = QRCodeAdapter(this@MainActivity).apply {
+                // 设置数据变化监听器
+                setOnDataChangeListener { totalCount, todayCount ->
+                    dataStatsFragment.updateStats(totalCount, todayCount)
+                }
+            }
         }
         
         val pagerAdapter = object : FragmentStateAdapter(this) {
@@ -101,6 +106,8 @@ class MainActivity : AppCompatActivity() {
         }
         
         viewPager.adapter = pagerAdapter
+        // 初始化统计数据
+        updateDataStats()
     }
     
     private fun setupTabLayout() {
@@ -271,7 +278,6 @@ class MainActivity : AppCompatActivity() {
                     // 扫码成功
                     tvScanTip.text = "扫码成功！"
                     tvScanTip.setTextColor(ContextCompat.getColor(this, R.color.teal_200))
-                    updateDataStats()
                     toneGenerator.startTone(ToneGenerator.TONE_PROP_BEEP, 150)
                     
                     // 2秒后恢复提示文本
