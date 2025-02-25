@@ -87,11 +87,16 @@ class QRCodeAdapter(private val context: Context) : RecyclerView.Adapter<QRCodeA
     }
 
     fun removeQRCode(position: Int) {
+        if (position < 0 || position >= displayList.size) return
+        
         val qrCode = displayList[position]
         allQRCodes.remove(qrCode)
         updateDisplayList()
         saveQRCodes()
         notifyDataChanged()
+        
+        // 显示删除成功提示
+        Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
     }
 
     private fun loadQRCodes() {
