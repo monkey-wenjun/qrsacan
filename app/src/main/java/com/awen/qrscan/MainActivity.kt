@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
             if (checkCameraPermission()) {
                 fabScan.visibility = View.GONE
                 cameraContainer.visibility = View.VISIBLE
-                tvScanTip.text = "请将二维码对准扫描框"
+                tvScanTip.text = "请扫描以http开头的网址二维码"
                 tvScanTip.setTextColor(ContextCompat.getColor(this, R.color.white))
                 startCamera()
             }
@@ -222,18 +222,48 @@ class MainActivity : AppCompatActivity() {
             val mediaImage = imageProxy.image
             if (mediaImage != null) {
                 val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-                val scanner = BarcodeScanning.getClient()
+                val scanner = BarcodeScanning.getClient(
+                    BarcodeScannerOptions.Builder()
+                        .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+                        .build()
+                )
 
                 scanner.process(image)
                     .addOnSuccessListener { barcodes ->
                         for (barcode in barcodes) {
-                            barcode.rawValue?.let { value ->
-                                val currentTime = System.currentTimeMillis()
-                                if (value != lastScannedContent || 
-                                    currentTime - lastScanTime > SCAN_INTERVAL) {
-                                    lastScannedContent = value
-                                    lastScanTime = currentTime
-                                    processQRCode(value)
+                            if (barcode.valueType == Barcode.TYPE_URL) {
+                                barcode.rawValue?.let { value ->
+                                    if (value.lowercase().startsWith("http")) {
+                                        val currentTime = System.currentTimeMillis()
+                                        if (value != lastScannedContent || 
+                                            currentTime - lastScanTime > SCAN_INTERVAL) {
+                                            lastScannedContent = value
+                                            lastScanTime = currentTime
+                                            processQRCode(value)
+                                        }
+                                    } else {
+                                        runOnUiThread {
+                                            tvScanTip.text = "请扫描以http开头的网址二维码"
+                                            tvScanTip.setTextColor(ContextCompat.getColor(this, R.color.accent))
+                                            
+                                            // 2秒后恢复提示文本
+                                            tvScanTip.postDelayed({
+                                                tvScanTip.text = "请将二维码对准扫描框"
+                                                tvScanTip.setTextColor(ContextCompat.getColor(this, R.color.white))
+                                            }, 2000)
+                                        }
+                                    }
+                                }
+                            } else {
+                                runOnUiThread {
+                                    tvScanTip.text = "请扫描网址二维码"
+                                    tvScanTip.setTextColor(ContextCompat.getColor(this, R.color.accent))
+                                    
+                                    // 2秒后恢复提示文本
+                                    tvScanTip.postDelayed({
+                                        tvScanTip.text = "请将二维码对准扫描框"
+                                        tvScanTip.setTextColor(ContextCompat.getColor(this, R.color.white))
+                                    }, 2000)
                                 }
                             }
                         }
