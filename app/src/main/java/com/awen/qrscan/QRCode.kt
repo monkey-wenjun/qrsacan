@@ -1,4 +1,4 @@
-package com.example.qrscan
+package com.awen.qrscan
 
 data class QRCode(
     val content: String,
@@ -12,9 +12,5 @@ data class QRCode(
 
     override fun hashCode(): Int {
         return content.hashCode()
-    }
-
-    override fun toString(): String {
-        return "QRCode(content='$content')"
     }
 } 

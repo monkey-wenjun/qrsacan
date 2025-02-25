@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.qrscan"
+    namespace = "com.awen.qrscan"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.qrscan"
+        applicationId = "com.awen.qrscan"
         minSdk = 35
         targetSdk = 35
         versionCode = 1

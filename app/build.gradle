@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.qrscan'
+    namespace 'com.awen.qrscan'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.qrscan"
+        applicationId "com.awen.qrscan"
         minSdk 26
         targetSdk 34
         versionCode 1
@@ -79,4 +79,12 @@ dependencies {
     // HTTP 请求
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+    
+    // Material Design
+    implementation 'com.google.android.material:material:1.11.0'
+    
+    // Fragment
+    implementation "androidx.fragment:fragment-ktx:1.6.2"
 } 

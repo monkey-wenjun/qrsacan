@@ -1,4 +1,4 @@
-package com.example.qrscan
+package com.awen.qrscan
 
 import android.content.Context
 import android.graphics.Canvas
@@ -10,11 +10,12 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class SwipeToDeleteCallback(context: Context) : ItemTouchHelper.SimpleCallback(
-    0, ItemTouchHelper.LEFT
+    0,
+    ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
 ) {
     private val deleteIcon = ContextCompat.getDrawable(context, android.R.drawable.ic_menu_delete)
-    private val background = ColorDrawable(Color.RED)
-    private val backgroundColor = Color.parseColor("#f44336")
+    private val background = ColorDrawable()
+    private val backgroundColor = Color.RED
     private val clearPaint = Paint().apply { xfermode = android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.CLEAR) }
 
     override fun onMove(
