@@ -24,6 +24,7 @@ class QRCodeAdapter(private val context: Context) : RecyclerView.Adapter<QRCodeA
     init {
         loadQRCodes()
         updateDisplayList()
+        removeDuplicates()
     }
 
     class QRCodeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -74,16 +75,20 @@ class QRCodeAdapter(private val context: Context) : RecyclerView.Adapter<QRCodeA
     }
 
     fun addQRCode(qrCode: QRCode): Boolean {
+        // 检查是否已存在相同内容的二维码
         val existingQRCode = allQRCodes.find { it.content == qrCode.content }
-        return if (existingQRCode == null) {
-            allQRCodes.add(qrCode)
-            saveQRCodes()
-            updateDisplayList()
-            notifyDataChanged()
-            true
-        } else {
-            false
+        if (existingQRCode != null) {
+            return false  // 已存在相同内容的二维码，返回false
         }
+
+        // 添加新的二维码
+        allQRCodes.add(qrCode)
+        saveQRCodes()
+        updateDisplayList()
+        
+        // 通知数据变化
+        notifyDataChanged()
+        return true
     }
 
     fun removeQRCode(position: Int) {
@@ -191,5 +196,16 @@ class QRCodeAdapter(private val context: Context) : RecyclerView.Adapter<QRCodeA
         }
 
         return file
+    }
+
+    fun removeDuplicates() {
+        val uniqueQRCodes = allQRCodes.distinctBy { it.content }
+        if (uniqueQRCodes.size < allQRCodes.size) {
+            allQRCodes.clear()
+            allQRCodes.addAll(uniqueQRCodes)
+            updateDisplayList()
+            // 更新统计数据
+            notifyDataChanged()
+        }
     }
 } 

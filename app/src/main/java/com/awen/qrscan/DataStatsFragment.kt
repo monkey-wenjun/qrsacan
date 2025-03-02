@@ -44,7 +44,8 @@ class DataStatsFragment : Fragment() {
             pendingTodayCount = todayCount
             return
         }
-        tvTotalCount.text = "总计：$totalCount 张卡券"
-        tvTodayCount.text = "今日新增：$todayCount 张"
+        // 格式化数字显示，确保数字准确性
+        tvTotalCount.text = String.format("总计：%d 张卡券", totalCount)
+        tvTodayCount.text = String.format("今日新增：%d 张", todayCount)
     }
 } 

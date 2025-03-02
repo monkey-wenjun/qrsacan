@@ -108,8 +108,11 @@ class MainActivity : AppCompatActivity() {
         }
         
         viewPager.adapter = pagerAdapter
-        // 初始化统计数据
-        updateDataStats()
+        
+        // 延迟更新统计数据，确保 Fragment 已完全初始化
+        viewPager.post {
+            updateDataStats()
+        }
     }
     
     private fun setupTabLayout() {
@@ -334,10 +337,11 @@ class MainActivity : AppCompatActivity() {
     }
     
     private fun updateDataStats() {
-        if (::qrCodeListFragment.isInitialized && qrCodeListFragment.isAdded) {
+        if (::qrCodeListFragment.isInitialized) {
             val adapter = qrCodeListFragment.adapter
             val totalCount = adapter.getItemCount()
             val todayCount = adapter.getTodayCount()
+            Log.d("DataStats", "Updating stats: total=$totalCount, today=$todayCount")
             dataStatsFragment.updateStats(totalCount, todayCount)
         }
     }
